@@ -1,0 +1,79 @@
+version: 2
+updates:
+  # Python dependencies (pip)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "03:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    pull-request-branch-name:
+      separator: "/"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+    reviewers:
+      - "zinthose"
+    labels:
+      - "dependencies"
+      - "security"
+    allow:
+      - dependency-type: "production"
+      - dependency-type: "development"
+    groups:
+      production-dependencies:
+        dependency-types:
+          - "production"
+        patterns:
+          - "proxmoxer"
+          - "requests"
+      development-dependencies:
+        dependency-types:
+          - "development"
+        patterns:
+          - "pytest"
+    ignore:
+      # (add packages to ignore if needed)
+      - dependency-name: "deprecated-package"
+
+  # Docker base image
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    pull-request-branch-name:
+      separator: "/"
+    commit-message:
+      prefix: "chore(docker)"
+      include: "scope"
+    reviewers:
+      - "zinthose"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "03:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    pull-request-branch-name:
+      separator: "/"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    reviewers:
+      - "zinthose"
+    labels:
+      - "ci"
+      - "github-actions"
