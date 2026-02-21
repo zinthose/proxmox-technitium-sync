@@ -24,14 +24,10 @@ updates:
       - dependency-type: "development"
     groups:
       production-dependencies:
-        dependency-types:
-          - "production"
         patterns:
           - "proxmoxer"
           - "requests"
       development-dependencies:
-        dependency-types:
-          - "development"
         patterns:
           - "pytest"
     ignore:
