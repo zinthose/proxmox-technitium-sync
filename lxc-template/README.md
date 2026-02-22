@@ -13,23 +13,58 @@ The LXC template automates container creation and configuration for running the 
 - **`template-deploy.sh`** - Proxmox custom user script for template deployment
 - **`.env.template`** - Environment configuration template
 
+## Quick Start (Recommended)
+
+**Fastest way to get running with auto-discovery:**
+
+```bash
+# 1. Run interactive enrollment (auto-discovers Technitium!)
+./enroll.sh
+
+# 2. Deploy container
+./template-deploy.sh
+
+# 3. Start service - it will use auto-generated .env
+```
+
 ## Deployment Methods
 
-### Method 1: Custom User Script (Recommended)
-Use Proxmox's custom user script feature during LXC container creation:
+### Method 1: Interactive Enrollment + Custom User Script (Recommended) ⭐
 
-1. In Proxmox UI: CT > Create > Advanced > Custom User Script
-2. Paste contents of `template-deploy.sh`
-3. Provide `.env` configuration during container creation
+1. **Auto-discover Technitium and generate credentials:**
+   ```bash
+   ./enroll.sh
+   ```
+   This interactive wizard will:
+   - Scan network for Technitium instances
+   - Generate API tokens automatically
+   - Create secure configuration file
+   - Show you exactly what will be done before applying
 
-### Method 2: Cloud-Init
+2. **Use custom user script in Proxmox UI:**
+   - CT > Create > Advanced > Custom User Script
+   - Paste contents of `template-deploy.sh`
+   - Container will auto-start service
+
+### Method 2: Manual Discovery and Token Generation
+
+```bash
+# Generate credentials with manual review
+./discover-and-generate-tokens.sh
+
+# Shows security implications before proceeding
+# Requires admin approval for each step
+# Dry-run mode available for testing
+```
+
+### Method 3: Cloud-Init
 Deploy using cloud-init directly:
 
 ```bash
 pct exec <container-id> -- bash -s < cloud-init-setup.sh
 ```
 
-### Method 3: Manual
+### Method 4: Manual Setup
 
 ```bash
 pct exec <container-id> -- bash -s < post-install-config.sh
@@ -50,6 +85,73 @@ TECHNITIUM_TOKEN=your-api-token
 ZONE=example.com
 ```
 
+### Automatic Discovery & Token Generation
+
+The `enroll.sh` script provides interactive setup:
+
+**Features:**
+- 🔍 Auto-discovers Technitium instances on your network
+- 🔑 Generates API tokens automatically (with admin approval)
+- 👁️ Shows exactly what changes will be made
+- 📋 Review mode for security-conscious deployments
+- ✅ Dry-run testing before applying
+- 🔒 Creates secure configuration files (mode 0600)
+
+**Security Implications:**
+- Requires Technitium admin credentials (temporary)
+- Network traffic should be on trusted networks only
+- Generated tokens allow DNS zone management only
+- Tokens can be revoked from Technitium UI anytime
+- All token creation appears in Technitium logs
+- Highly recommended to use HTTPS with valid certificates
+
+**Running Enrollment:**
+
+```bash
+# Interactive mode (asks for approvals)
+./enroll.sh
+
+# Specific Technitium host
+./enroll.sh --technitium-host dns.example.com
+
+# Dry-run (shows what would happen)
+./enroll.sh --dry-run
+```
+
+### Manual Token Generation
+
+If auto-generation fails, manually create tokens in Technitium:
+
+```bash
+./discover-and-generate-tokens.sh --technitium-host dns.local
+```
+
+This script:
+- Shows security implications before proceeding
+- Requires explicit user confirmation
+- Never applies changes without review
+- Can be run in dry-run mode first
+- Safely handles authentication failures
+
+**Discovery Script Options:**
+
+```bash
+# Dry-run mode (no changes applied)
+./discover-and-generate-tokens.sh --dry-run
+
+# Skip review (requires --accept-implications)
+./discover-and-generate-tokens.sh --accept-implications
+
+# Manual host specification
+./discover-and-generate-tokens.sh --technitium-host 10.0.0.10
+
+# Custom admin credentials
+./discover-and-generate-tokens.sh \
+  --technitium-host dns.local \
+  --technitium-admin myuser \
+  --technitium-password mypass
+```
+
 ## Features
 
 - ✅ Alpine Linux 3.12+ base
@@ -58,6 +160,11 @@ ZONE=example.com
 - ✅ Service auto-start on container boot
 - ✅ Health checks configured
 - ✅ Logging to syslog
+- ✅ **Auto-discovery of Technitium instances** 🔍
+- ✅ **Automatic API token generation** 🔑
+- ✅ **Interactive enrollment wizard** 🧙
+- ✅ **Dry-run and review modes for safety** 👁️
+- ✅ **Secure credential handling (0600 permissions)** 🔒
 
 ## Testing
 
