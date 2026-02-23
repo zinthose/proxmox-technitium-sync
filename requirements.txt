@@ -1,5 +1,5 @@
 # Security-critical packages - pinned versions for reproducible builds
 # Regular dependency updates recommended quarterly
-proxmoxer==2.0.1
-requests==2.31.0
+proxmoxer==2.2.0
+requests==2.32.5
 pytest==8.0.0
