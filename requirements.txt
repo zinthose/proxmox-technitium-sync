@@ -2,4 +2,4 @@
 # Regular dependency updates recommended quarterly
 proxmoxer==2.0.1
 requests==2.31.0
-pytest==8.0.0
+pytest==9.0.2
